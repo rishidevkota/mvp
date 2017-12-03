@@ -1,13 +1,10 @@
-//sahakari.io
 //Rishi Ram Devkota
-//Start 2017 Dec 2 6:10pm +5.45
-//End 207 Dec 3 
+//2017 Dec
 package main
 import (
 	"net/http"
 	"html/template"
 	"github.com/rishidevkota/mvp/db"
-	"fmt"
 	"strconv"
 )
 type Account struct {
@@ -91,9 +88,7 @@ func accounts(w http.ResponseWriter, r *http.Request) {
 			
 		} else {
 			db.QueryRow("select guid from accounts where account_type=?", "ROOT").Scan(&account.Guid)
-			fmt.Println(string(account.Guid))
 			http.Redirect(w, r, "/accounts?guid="+strconv.Itoa(account.Guid), http.StatusFound)
-			//w.Write([]byte("not placeholder"))
 		}
 	case "POST":
 		var placeholder bool
@@ -124,7 +119,6 @@ func transaction(w http.ResponseWriter, r *http.Request) {
 		r.FormValue("date"),
 		r.FormValue("description"),
 	)
-	//fmt.Println(result.LastInsertId())
 	tx_guid, err := result.LastInsertId()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
