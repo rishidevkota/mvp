@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>sahakari.io</title>
+</head>
+<body>
+{{if .Account.Placeholder}}
+    {{range .Childaccounts}}
+        <a href="/accounts?guid={{.Guid}}">{{.Name}}</a>
+    {{end}}
+    <form action="/accounts" method="post">
+        <table>
+            <tr>
+                <td>Account name:</td>
+                <td><input type="text" name="name"></td>
+            </tr>
+            <tr>
+                <td>Account code:</td>
+                <td><input type="text" name="code"></td>
+            </tr>
+            <tr>
+                <td>Description:</td>
+                <td><input type="text" name="description"></td>
+            </tr>
+            <tr>
+                <td>Account type:</td>
+                
+                <td><select name="account_type">
+                    <option>ASSET</option>
+                    <option>EQUITY</option>
+                    <option>EXPENSES</option>
+                    <option>INCOME</option>
+                    <option>LIBILITIES</option>
+                </select></td>
+                
+            </tr>
+            <tr>
+                <td>
+                    <input id="placeholder" type="checkbox" name="placeholder" value="placeholder">
+                    <label for="placeholder">Placeholder</label>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td><td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Create New Account"></td>
+            </tr>
+        </table>
+        <input type="hidden" name="parent_guid" value="{{.Account.Guid}}">
+    </form>
+{{else}}
+    <form action="/transaction" method="post">
+        <input type="text" name="date" placeholder="date">
+        <input type="text" name="num" placeholder="num">
+        <input type="text" name="description" placeholder="description">
+        <input type="text" name="transfer" placeholder="transfer">
+        <input type="text" name="debit" placeholder="debit">
+        <input type="text" name="credit" placeholder="credit">
+        <input type="hidden" name="mguid" value="{{.Account.Guid}}">
+        <input type="submit" value="submit">
+    </form>
+    <table style="width:100%">
+        <tr>
+            <th>Date</th><th>Num</th><th>Description</th><th>Debit</th><th>Credit</th><th>Balance</th>
+        </tr>
+        {{range .Transactions}}
+        <tr>
+            <td>{{.Date}}</td><td>{{.Num}}</td><td>{{.Description}}</td><td>{{.Debit}}</td><td>{{.Credit}}</td><td></td>
+        </tr>
+        {{end}}
+    </table>
+{{end}}
+</body>
+</html>
