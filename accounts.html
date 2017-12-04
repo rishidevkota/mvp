@@ -7,6 +7,14 @@
     <title>sahakari.io</title>
 </head>
 <body>
+{{range .Path}}
+{{if eq .Name "ROOT"}}
+    <a href="/accounts?guid={{.Guid}}">Accounts</a>
+{{else}}
+    <a href="/accounts?guid={{.Guid}}">{{.Name}}</a>
+{{end}}
+{{end}}
+<br>
 {{if .Account.Placeholder}}
     {{range .Childaccounts}}
         <a href="/accounts?guid={{.Guid}}">{{.Name}}</a>

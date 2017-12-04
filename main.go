@@ -22,10 +22,25 @@ type Transaction struct {
 	Debit int
 	Credit int
 }
-
+type Pathelement struct{
+	Guid int
+	Name string
+}
 var accountTemplate = template.Must(template.ParseFiles("accounts.html"))
 
 func accounts(w http.ResponseWriter, r *http.Request) {
+	/*TODO:
+	path
+	WITH tblParent AS
+				(
+    				SELECT *
+        			FROM accounts WHERE guid = ?
+    				UNION ALL
+    				SELECT accounts.*
+        			FROM accounts  JOIN tblParent  ON accounts.guid = tblParent.parent_guid
+				)
+				SELECT guid, name, placeholder FROM  tblParent where name <> 'ROOT' order by guid`
+	*/
 	guid := r.FormValue("guid")
 	var account Account
 
@@ -38,7 +53,26 @@ func accounts(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			
+			var path []Pathelement
+			rows := db.Query(`WITH parent AS
+				(
+    				SELECT *
+        			FROM accounts WHERE guid = ?
+    				UNION ALL
+    				SELECT accounts.*
+        			FROM accounts  JOIN parent  ON accounts.guid = parent.parent_guid
+				)
+				SELECT guid, name FROM  parent order by guid`, guid)
+			for rows.Next() {
+				var pathelement Pathelement
+				err := rows.Scan(&pathelement.Guid, &pathelement.Name)
+				if err!= nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				path = append(path, pathelement)
+			}
+
 			var childaccounts []Account
 			var transactions []Transaction
 			if account.Placeholder {
@@ -82,6 +116,7 @@ func accounts(w http.ResponseWriter, r *http.Request) {
 			}
 			accountTemplate.Execute(w, map[string]interface{}{
 				"Account": account,
+				"Path": path,
 				"Childaccounts": childaccounts,
 				"Transactions": transactions,
 			})
@@ -110,6 +145,12 @@ func accounts(w http.ResponseWriter, r *http.Request) {
 }
 
 func transaction(w http.ResponseWriter, r *http.Request) {
+	/*TODO:
+	INSERT INTO table3 ( name, age, sex, city, id, number, nationality)
+	SELECT name, age, sex, city, p.id, number, n.nationality
+	FROM table1 p
+	INNER JOIN table2 c ON c.Id = p.Id
+	*/
 	debit, _ := strconv.Atoi(r.FormValue("debit"))
 	credit, _ := strconv.Atoi(r.FormValue("credit"))
 	value := debit - credit
