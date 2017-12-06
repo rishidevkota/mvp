@@ -5,21 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>sahakari.io</title>
+    <style>
+        body{
+            margin: 0 auto;
+            max-width: 50em;
+        }
+        header,header.a{
+	        font-weight: bold;
+        }
+        header{
+            padding: 0.5rem 0 0.5rem 0; 
+            border-bottom: 0.10em solid black;
+        }
+        a {
+	text-decoration: none;
+	color: inherit;
+	-moz-transition-property: background;
+	-webkit-transition-property: background;
+	transition-property: background;
+	-moz-transition-duration: 0.2s;
+	-webkit-transition-duration: 0.2s;
+	transition-duration: 0.2s;
+}
+a:hover {
+	background: #fbf3f3;
+	-moz-transition-property: background;
+	-webkit-transition-property: background;
+	transition-property: background;
+	-moz-transition-duration: 0.2s;
+	-webkit-transition-duration: 0.2s;
+	transition-duration: 0.2s;
+	border-radius: 10px;
+}
+    </style>
 </head>
 <body>
-{{range .Path}}
-{{if eq .Name "ROOT"}}
-    <a href="/accounts?guid={{.Guid}}">Accounts</a>
-{{else}}
-    <a href="/accounts?guid={{.Guid}}">{{.Name}}</a>
-{{end}}
-{{end}}
-<br>
+    <header>
+    {{range .Path}}
+    {{if eq .Name "ROOT"}}/<a href="/accounts?guid={{.Guid}}">Accounts</a>
+    {{else}}/<a href="/accounts?guid={{.Guid}}">{{.Name}}</a>{{end}}
+    {{end}}
+        <span style="float:right">
+            <a href="#">New</a>
+        </span>
+    </header>
 {{if .Account.Placeholder}}
     {{range .Childaccounts}}
-        <a href="/accounts?guid={{.Guid}}">{{.Name}}</a>
+        <p><a href="/accounts?guid={{.Guid}}">{{.Name}}</a></p>
     {{end}}
-    <form action="/accounts" method="post">
+    <form action="/accounts" method="post" hidden>
         <table>
             <tr>
                 <td>Account name:</td>
