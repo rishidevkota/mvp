@@ -26,21 +26,15 @@ type Pathelement struct{
 	Guid int
 	Name string
 }
+
 var accountTemplate = template.Must(template.ParseFiles("accounts.html"))
+var indexTemplate = template.Must(template.ParseFiles("base.html", "index.html"))
+
+func index(w http.ResponseWriter, r *http.Request) {
+	indexTemplate.Execute(w, nil)
+}
 
 func accounts(w http.ResponseWriter, r *http.Request) {
-	/*TODO:
-	path
-	WITH tblParent AS
-				(
-    				SELECT *
-        			FROM accounts WHERE guid = ?
-    				UNION ALL
-    				SELECT accounts.*
-        			FROM accounts  JOIN tblParent  ON accounts.guid = tblParent.parent_guid
-				)
-				SELECT guid, name, placeholder FROM  tblParent where name <> 'ROOT' order by guid`
-	*/
 	guid := r.FormValue("guid")
 	var account Account
 
@@ -145,12 +139,6 @@ func accounts(w http.ResponseWriter, r *http.Request) {
 }
 
 func transaction(w http.ResponseWriter, r *http.Request) {
-	/*TODO:
-	INSERT INTO table3 ( name, age, sex, city, id, number, nationality)
-	SELECT name, age, sex, city, p.id, number, n.nationality
-	FROM table1 p
-	INNER JOIN table2 c ON c.Id = p.Id
-	*/
 	debit, _ := strconv.Atoi(r.FormValue("debit"))
 	credit, _ := strconv.Atoi(r.FormValue("credit"))
 	value := debit - credit
@@ -174,6 +162,7 @@ func transaction(w http.ResponseWriter, r *http.Request) {
 		-value)
 }
 func main() {
+	http.HandleFunc("/", index)
 	http.HandleFunc("/accounts", accounts)
 	http.HandleFunc("/transaction", transaction)
 	http.ListenAndServe(":8080", nil)
